@@ -50,13 +50,13 @@ func newBackend() (*backend, error) {
 
 			// unauthenticated path for the redirect
 			Unauthenticated: []string{
-				"authenticate",
+				"callback",
 			},
 		},
 		Paths: framework.PathAppend(
 			[]*framework.Path{
 				pathConfig(&b),
-				pathAuthenticate(&b),
+				pathCallback(&b),
 			},
 		),
 	}
