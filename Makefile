@@ -20,8 +20,12 @@ build:
 start:
 	vault server -dev -dev-root-token-id=root -dev-plugin-dir=./vault/plugins
 
-enable:
+enable: disable
 	vault secrets enable monzo
+	./test/config.sh
+
+disable:
+	vault secrets disable monzo
 
 clean:
 	rm -f ./vault/plugins/monzo
