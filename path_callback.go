@@ -46,8 +46,6 @@ func (b *backend) pathCallbackRead(ctx context.Context, req *logical.Request, da
 
 	return &logical.Response{
 		Data: map[string]interface{}{
-			"ctx":  ctx,
-			"req":  req,
 			"data": data,
 		},
 	}, nil

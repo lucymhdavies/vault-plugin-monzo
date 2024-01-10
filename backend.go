@@ -57,6 +57,7 @@ func newBackend() (*backend, error) {
 			[]*framework.Path{
 				pathConfig(&b),
 				pathCallback(&b),
+				pathAuthURL(&b),
 			},
 		),
 	}

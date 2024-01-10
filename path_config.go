@@ -72,6 +72,11 @@ func pathConfig(b *backend) *framework.Path {
 					Sensitive: false,
 				},
 			},
+
+			// TODO: Add a RedirectURL to this
+			// or at least a VAULT_ADDR
+			// the mount point we can at least extract from req.mount_point, when
+			// we generate the Auth URL in path_auth_url.go
 		},
 		Operations: map[logical.Operation]framework.OperationHandler{
 			logical.ReadOperation: &framework.PathOperation{
