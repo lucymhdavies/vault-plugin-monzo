@@ -47,10 +47,16 @@ func newBackend() (*backend, error) {
 			SealWrapStorage: []string{
 				"config",
 			},
+
+			// unauthenticated path for the redirect
+			Unauthenticated: []string{
+				"authenticate",
+			},
 		},
 		Paths: framework.PathAppend(
 			[]*framework.Path{
 				pathConfig(&b),
+				pathAuthenticate(&b),
 			},
 		),
 	}
