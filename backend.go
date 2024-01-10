@@ -34,6 +34,10 @@ func Factory(ctx context.Context, conf *logical.BackendConfig) (logical.Backend,
 	}
 
 	return b, nil
+
+	// TODO: is this run every time Vault starts up, or only when the secret engine is first mounted?
+	// if it's the latter, we'll need to find some way to instantiate the oauth2 client
+	// when Vault restarts
 }
 
 func newBackend() (*backend, error) {
