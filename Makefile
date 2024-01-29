@@ -22,7 +22,8 @@ start:
 
 enable: disable
 	vault secrets enable monzo
-	./test/config.sh
+	vlt run -c "./config.sh"
+	# TODO: see if we can make this optional
 
 disable:
 	vault secrets disable monzo
