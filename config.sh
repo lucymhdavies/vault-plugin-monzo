@@ -14,7 +14,7 @@ fi
 # TODO: if MONZO_CLIENT_ID already exists, don't bother with vlt
 
 if command -v vlt &> /dev/null ; then
-	if ps -j | grep -v grep | grep -q "vlt run -c" ; then
+	if ps -j | grep -v grep | grep -q "vlt" ; then
 		true # no-op needed
 	else
 		echo "vlt available, re-running under vlt..."
