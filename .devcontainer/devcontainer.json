@@ -1,0 +1,4 @@
+{
+  "name": "My Codespace",
+  "postCreateCommand": "bash .devcontainer/provision-codespace.sh"
+}
