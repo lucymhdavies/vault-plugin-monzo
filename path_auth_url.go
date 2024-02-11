@@ -54,7 +54,7 @@ func (b *backend) pathAuthURLWrite(ctx context.Context, req *logical.Request, da
 		},
 
 		// TODO: figure this out automatically from req? May not be possible
-		RedirectURL: "http://localhost:8200/v1/monzo/callback",
+		RedirectURL: config.RedirectBaseURL + "/v1/monzo/callback",
 	}
 
 	url := conf.AuthCodeURL(uuid.New().String())

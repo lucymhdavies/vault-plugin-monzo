@@ -23,6 +23,9 @@ start:
 enable:
 	./config.sh
 
+auth:
+	vault write -f monzo/auth-url
+
 clean:
 	rm -f ./vault/plugins/monzo
 

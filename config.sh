@@ -31,4 +31,10 @@ vault secrets disable monzo
 vault secrets enable monzo
 
 # And configure, using the creds we either got from env or vlt
-vault write monzo/config client_id=${MONZO_CLIENT_ID} client_secret=${MONZO_CLIENT_SECRET}
+if [ -z ${REDIRECT_BASE_URL} ] ; then
+	vault write monzo/config client_id=${MONZO_CLIENT_ID} client_secret=${MONZO_CLIENT_SECRET}
+else
+	vault write monzo/config client_id=${MONZO_CLIENT_ID} client_secret=${MONZO_CLIENT_SECRET} redirect_base_url="${REDIRECT_BASE_URL}"
+fi
+
+vault read monzo/config

@@ -20,6 +20,7 @@ type monzoConfig struct {
 	ClientSecret string `json:"password"`
 	AuthURL      string `json:"auth_url"`
 	TokenURL     string `json:"token_url"`
+	RedirectBaseURL string `json:"redirect_base_url`
 
 	// TODO: what if we just had an oauth2.Config ?
 }
@@ -73,6 +74,18 @@ func pathConfig(b *backend) *framework.Path {
 				},
 			},
 
+
+			"redirect_base_url": {
+				Type:        framework.TypeString,
+				Description: "The Vault base URL to be redirected back to",
+				Required:    false,
+				Default:     "http://localhost:8200",
+				DisplayAttrs: &framework.DisplayAttributes{
+					Name:      "Vault Base URL",
+					Sensitive: false,
+				},
+			},
+
 			// TODO: Add a RedirectURL to this
 			// or at least a VAULT_ADDR
 			// the mount point we can at least extract from req.mount_point, when
@@ -120,6 +133,7 @@ func (b *backend) pathConfigRead(ctx context.Context, req *logical.Request, data
 			"client_id": config.ClientID,
 			"auth_url":  config.AuthURL,
 			"token_url": config.TokenURL,
+			"redirect_base_url": config.RedirectBaseURL,
 		},
 	}, nil
 }
@@ -143,6 +157,8 @@ func (b *backend) pathConfigWrite(ctx context.Context, req *logical.Request, dat
 	// set defaults (on either create or update)
 	config.AuthURL = "https://auth.monzo.com/"
 	config.TokenURL = "https://api.monzo.com/oauth2/token"
+	config.RedirectBaseURL = "http://localhost:8200"
+	// TODO: can we pull these from above? We must be able to somehow...
 
 	if clientID, ok := data.GetOk("client_id"); ok {
 		config.ClientID = clientID.(string)
@@ -162,6 +178,10 @@ func (b *backend) pathConfigWrite(ctx context.Context, req *logical.Request, dat
 
 	if tokenURL, ok := data.GetOk("token_url"); ok {
 		config.TokenURL = tokenURL.(string)
+	}
+
+	if baseURL, ok := data.GetOk("redirect_base_url"); ok {
+		config.RedirectBaseURL = baseURL.(string)
 	}
 
 	entry, err := logical.StorageEntryJSON(configStoragePath, config)

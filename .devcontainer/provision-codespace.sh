@@ -5,6 +5,9 @@ set -ex
 # Accessing the secret
 # (This is where I'd pull and use my HCP-VS creds)
 echo "My secret value is: $MY_SECRET"
+# Might be this...
+# export "HCP_CLIENT_ID=foo" >> ~/.bashrc
+# export "HCP_CLIENT_SECRET=foo" >> ~/.bashrc
 
 # TODO: Also create a .vlt.json from the secret env vars
 
