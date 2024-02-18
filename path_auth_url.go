@@ -44,7 +44,7 @@ func (b *backend) pathAuthURLWrite(ctx context.Context, req *logical.Request, da
 
 	// TODO: check if we've got a valid config yet, and fail if we do not
 
-	conf := &oauth2.Config{
+	oauthConfig := &oauth2.Config{
 		ClientID:     config.ClientID,
 		ClientSecret: config.ClientSecret,
 		Scopes:       []string{}, // Monzo API has no documented scopes
@@ -57,7 +57,8 @@ func (b *backend) pathAuthURLWrite(ctx context.Context, req *logical.Request, da
 		RedirectURL: config.RedirectBaseURL + "/v1/monzo/callback",
 	}
 
-	url := conf.AuthCodeURL(uuid.New().String())
+	url := oauthConfig.AuthCodeURL(uuid.New().String())
+	// TODO: We probably want to persist this specific oauth2 client...
 
 	return &logical.Response{
 		Data: map[string]interface{}{

@@ -24,7 +24,13 @@ enable:
 	./test/config.sh
 
 auth:
-	vault write -f monzo/auth-url
+	./test/auth.sh
+
+token:
+	./test/get-token.sh
+
+api:
+	./test/api.sh
 
 clean:
 	rm -f ./vault/plugins/monzo
