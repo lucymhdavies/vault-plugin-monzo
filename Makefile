@@ -29,6 +29,9 @@ auth:
 token:
 	./test/get-token.sh
 
+api:
+	./test/api.sh
+
 clean:
 	rm -f ./vault/plugins/monzo
 
