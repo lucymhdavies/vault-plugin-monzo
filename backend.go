@@ -33,14 +33,14 @@ func Factory(ctx context.Context, conf *logical.BackendConfig) (logical.Backend,
 		return nil, err
 	}
 
-	return b, nil
-
 	// TODO: is this run every time Vault starts up, or only when the secret engine is first mounted?
 	// if it's the latter, we'll need to find some way to instantiate the oauth2 client
 	// when Vault restarts
+	//
+	// For now, I'm only testing in an in-mem dev Vault, but this should be answered by running a persistent Vault
+	b.Logger().Info("New Plugin Backend Initialised")
 
-	// TODO: here's an idea... spin off a Goroutine to print some data every few seconds?
-	// Maybe the apiloop from https://github.com/lucymhdavies/monzo-token-renewer/blob/main/main.go#L97
+	return b, nil
 }
 
 func newBackend() (*backend, error) {
@@ -68,6 +68,8 @@ func newBackend() (*backend, error) {
 				pathToken(&b),
 			},
 		),
+
+		PeriodicFunc: b.renewToken,
 	}
 
 	return &b, nil

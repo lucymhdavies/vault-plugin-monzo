@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
+	"golang.org/x/oauth2"
 )
 
 func pathCallback(b *backend) *framework.Path {
@@ -44,25 +45,23 @@ func (b *backend) pathCallbackRead(ctx context.Context, req *logical.Request, da
 	// the stuff we need is in req.map.code and req.map.state, or data.Raw.code and data.Raw.state
 	// Ideally actually use https://pkg.go.dev/github.com/hashicorp/vault/sdk/framework#FieldData
 
-	/*
-		config, err := getConfig(ctx, req.Storage)
-		if err != nil {
-			return nil, err
-		}
+	config, err := getConfig(ctx, req.Storage)
+	if err != nil {
+		return nil, err
+	}
 
-		oauthConfig := &oauth2.Config{
-			ClientID:     config.ClientID,
-			ClientSecret: config.ClientSecret,
-			Scopes:       []string{}, // Monzo API has no documented scopes
-			Endpoint: oauth2.Endpoint{
-				AuthURL:  config.AuthURL,
-				TokenURL: config.TokenURL,
-			},
+	oauthConfig := &oauth2.Config{
+		ClientID:     config.ClientID,
+		ClientSecret: config.ClientSecret,
+		Scopes:       []string{}, // Monzo API has no documented scopes
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  config.AuthURL,
+			TokenURL: config.TokenURL,
+		},
 
-			// TODO: figure this out automatically from req? May not be possible
-			RedirectURL: config.RedirectBaseURL + "/v1/monzo/callback",
-		}
-	*/
+		// TODO: figure this out automatically from req? May not be possible
+		RedirectURL: config.RedirectBaseURL + "/v1/monzo/callback",
+	}
 
 	// TODO: Validate that we have a "code" in our payload
 	var code string = data.Raw["code"].(string)
@@ -72,7 +71,7 @@ func (b *backend) pathCallbackRead(ctx context.Context, req *logical.Request, da
 	//var state string = data.Raw["state"].(string)
 	//oauthConfig.AuthCodeURL(state)
 
-	b.Logger().Info("Attempting token exchange", "code", code)
+	b.Logger().Info("Attempting token exchange")
 
 	tok, err := oauthConfig.Exchange(ctx, code)
 	if err != nil {
@@ -90,8 +89,6 @@ func (b *backend) pathCallbackRead(ctx context.Context, req *logical.Request, da
 		return nil, err
 	}
 	b.Logger().Info("Token persisted to storage")
-
-	// TODO: at this point we want to set up a token renewer
 
 	return &logical.Response{
 		Data: map[string]interface{}{
