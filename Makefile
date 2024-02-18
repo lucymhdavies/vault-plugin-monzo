@@ -21,7 +21,7 @@ start:
 	vault server -dev -dev-root-token-id=root -dev-plugin-dir=./vault/plugins
 
 enable:
-	./config.sh
+	./test/config.sh
 
 auth:
 	vault write -f monzo/auth-url
