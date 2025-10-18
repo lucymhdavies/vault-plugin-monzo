@@ -65,6 +65,10 @@ func getToken(ctx context.Context, s logical.Storage) (*oauth2.Token, error) {
 		return nil, fmt.Errorf("error reading root configuration: %w", err)
 	}
 
+	// TODO: We should do a bunch of the same logic we currently have in renewToken
+	// i.e. before naively returning the token, check if it needs a refresh first
+	// however... renewToken currently calls getToken, so we'll need to move stuff around first
+
 	// return the token, we are done
 	return token, nil
 }
@@ -73,8 +77,27 @@ func getToken(ctx context.Context, s logical.Storage) (*oauth2.Token, error) {
 
 // TODO: renewToken function will refresh the token if needed
 func (b *backend) renewToken(ctx context.Context, req *logical.Request) error {
+	b.Logger().Debug("renewToken called")
+
+	config, err := getConfig(ctx, req.Storage)
+	if err != nil {
+		b.Logger().Error("getConfig err", err)
+		return err
+	}
+	oauthConfig := &oauth2.Config{
+		ClientID:     config.ClientID,
+		ClientSecret: config.ClientSecret,
+		Scopes:       []string{}, // Monzo API has no documented scopes
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  config.AuthURL,
+			TokenURL: config.TokenURL,
+		},
+		RedirectURL: config.RedirectBaseURL + "/v1/monzo/callback",
+	}
+
 	token, err := getToken(ctx, req.Storage)
 	if err != nil {
+		b.Logger().Error("getToken err", err)
 		return err
 	}
 
@@ -83,9 +106,37 @@ func (b *backend) renewToken(ctx context.Context, req *logical.Request) error {
 		return nil
 	}
 
-	// TODO: if we do have a token, but it has expired, clear it from storage
+	// Create a TokenSource that can auto-refresh
+	ts := oauth2.ReuseTokenSource(token, oauthConfig.TokenSource(ctx, token))
 
-	b.Logger().Info("UNIMPLEMENTED: Renew Token", "expiry", token.Expiry)
+	// For testing, force the token to refresh...
+	// token.Expiry = time.Now().Add(-time.Minute)
+
+	// Get the current (or refreshed) token
+	current, err := ts.Token()
+	if err != nil {
+		b.Logger().Error("ts.Token() err", err)
+		return err
+	}
+
+	b.Logger().Debug("Current token", "expiry", current.Expiry)
+
+	// Persist if changed
+	// TODO: call setToken
+	if current.AccessToken != token.AccessToken {
+		b.Logger().Debug("There was a new token", "token", current)
+
+		// TODO: We probably want to modify the config somewhat, so it can renew before it actually expires
+
+		entry, err := logical.StorageEntryJSON(tokenStoragePath, current)
+		if err != nil {
+			return err
+		}
+		if err := req.Storage.Put(ctx, entry); err != nil {
+			return err
+		}
+		b.Logger().Info("New token persisted to storage")
+	}
 
 	return nil
 }

@@ -81,6 +81,7 @@ func (b *backend) pathCallbackRead(ctx context.Context, req *logical.Request, da
 
 	b.Logger().Debug("We got token", "token", tok)
 
+	// TODO: call setToken
 	entry, err := logical.StorageEntryJSON(tokenStoragePath, tok)
 	if err != nil {
 		return nil, err
