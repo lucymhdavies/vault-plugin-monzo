@@ -20,6 +20,9 @@ build:
 start:
 	vault server -dev -dev-root-token-id=root -dev-plugin-dir=./vault/plugins
 
+monitor:
+	./test/monitor.sh
+
 enable:
 	./test/config.sh
 
