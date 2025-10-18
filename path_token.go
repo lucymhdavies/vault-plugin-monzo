@@ -39,8 +39,6 @@ func (b *backend) pathTokenRead(ctx context.Context, req *logical.Request, data 
 
 	// TODO: if we do have a token, but it has expired, clear it from storage
 
-	// TODO: if token is nil, return error?
-
 	return &logical.Response{
 		Data: map[string]interface{}{
 			"access_token":  token.AccessToken,
