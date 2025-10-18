@@ -16,10 +16,10 @@ const (
 // monzoConfig includes the minimum configuration
 // required to instantiate a new Monzo client.
 type monzoConfig struct {
-	ClientID     string `json:"username"`
-	ClientSecret string `json:"password"`
-	AuthURL      string `json:"auth_url"`
-	TokenURL     string `json:"token_url"`
+	ClientID        string `json:"username"`
+	ClientSecret    string `json:"password"`
+	AuthURL         string `json:"auth_url"`
+	TokenURL        string `json:"token_url"`
 	RedirectBaseURL string `json:"redirect_base_url`
 
 	// TODO: what if we just had an oauth2.Config ?
@@ -73,7 +73,6 @@ func pathConfig(b *backend) *framework.Path {
 					Sensitive: false,
 				},
 			},
-
 
 			"redirect_base_url": {
 				Type:        framework.TypeString,
@@ -130,9 +129,9 @@ func (b *backend) pathConfigRead(ctx context.Context, req *logical.Request, data
 
 	return &logical.Response{
 		Data: map[string]interface{}{
-			"client_id": config.ClientID,
-			"auth_url":  config.AuthURL,
-			"token_url": config.TokenURL,
+			"client_id":         config.ClientID,
+			"auth_url":          config.AuthURL,
+			"token_url":         config.TokenURL,
 			"redirect_base_url": config.RedirectBaseURL,
 		},
 	}, nil

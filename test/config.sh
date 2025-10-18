@@ -11,19 +11,6 @@ if [ -f .env ]; then
 	source .env
 fi
 
-# TODO: if MONZO_CLIENT_ID already exists, don't bother with vlt
-
-if command -v vlt &> /dev/null ; then
-	if ps -j | grep -v grep | grep -q "vlt" ; then
-		true # no-op needed
-	else
-		echo "vlt available, re-running under vlt..."
-		vlt run -c "./config.sh"
-		exit 0
-	fi
-fi
-
-
 # Disable the plugin if it already exists
 vault secrets disable monzo
 

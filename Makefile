@@ -20,11 +20,20 @@ build:
 start:
 	vault server -dev -dev-root-token-id=root -dev-plugin-dir=./vault/plugins
 
+monitor:
+	./test/monitor.sh
+
 enable:
 	./test/config.sh
 
 auth:
-	vault write -f monzo/auth-url
+	./test/auth.sh
+
+token:
+	./test/get-token.sh
+
+api:
+	./test/api.sh
 
 clean:
 	rm -f ./vault/plugins/monzo
